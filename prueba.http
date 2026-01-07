@@ -1,1 +1,1 @@
-GET http://localhost:3000/api/gamesCatalogo/catalogo
+GET https://api.rawg.io/api/games?key=8278241501b74d47b2278914aaa7dd85&name=call
