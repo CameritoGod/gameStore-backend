@@ -12,43 +12,45 @@ class GamesController {
   // Juegos para pantalla principal (HOME)
   async gamesAll(req, res) {
     try {
-      // Paginación desde el frontend
-      const page = req.query.page || 1;
-      const pageSize = 12; // ideal para grids
-
+      const { page = 1, genre, year, search } = req.query;
+      const pageSize = 12;
+    
       const response = await axios.get(BASE_URL, {
         params: {
           key: API_KEY,
           page,
           page_size: pageSize,
-          ordering: '-rating'
+          ...(genre && genre !== "all" && { genres: genre }),
+          ...(search && { search }),
+          ...(year && {
+            dates: `${year}-01-01,${year}-12-31`
+          })
         }
       });
-
-      // Adaptamos la data para el frontend
+    
       const games = response.data.results.map(game => ({
         id: game.id,
         name: game.name,
         image: game.background_image,
         rating: game.rating,
         released: game.released,
-        genres: game.genres.map(g => g.name),
-        platforms: game.platforms.map(p => p.platform.name)
+        genres: game.genres.map(g => g.name)
       }));
-
-      res.status(200).json({
+    
+      res.json({
         page: Number(page),
         total: response.data.count,
         games
       });
-
+    
     } catch (error) {
       res.status(500).json({
-        message: 'Error al obtener el catálogo de juegos',
+        message: "Error al obtener juegos",
         error: error.message
       });
     }
   }
+
 
  // Detalle de un juego por ID
 async gameById(req, res) {
@@ -56,7 +58,7 @@ async gameById(req, res) {
     const { id } = req.params;
     const pageSizeImg = 6;
 
-    // 1️⃣ Obtener datos del juego
+    // Obtener datos del juego
     const gameResponse = await axios.get(`${BASE_URL}/${id}`, {
       params: {
         key: API_KEY
@@ -65,7 +67,7 @@ async gameById(req, res) {
 
     const game = gameResponse.data;
 
-    // 2️⃣ Obtener screenshots
+    // Obtener screenshots
     let screenshots = [];
 
     try {
@@ -84,7 +86,7 @@ async gameById(req, res) {
       console.warn("No se pudieron obtener screenshots");
     }
 
-    // 3️⃣ Armar objeto final
+    // Armar objeto final
     const gameDetail = {
       id: game.id,
       name: game.name,
