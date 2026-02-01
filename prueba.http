@@ -16,13 +16,22 @@
 #   "password": "123456"
 # }
 
-PUT http://localhost:3000/user/2
+#PUT http://localhost:3000/user/2
+#Content-Type: application/json
+#Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6ImNsaWVudGUiLCJpYXQiOjE3NjkyOTQ2ODQsImV4cCI6MTc2OTMwMTg4NH0.L_bIgWQLFNE8cpT-02ryVk9AeJINQgvi-DRyQQ_5zs4
+#
+#{
+#  "nombre": "Luis",
+#  "nickname": "Luis123",
+#  "email": "luis123@gmail.com",
+#  "password": "1234567890"
+#}
+
+DELETE http://localhost:3000/user/deletefavorites
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6ImNsaWVudGUiLCJpYXQiOjE3NjkyOTQ2ODQsImV4cCI6MTc2OTMwMTg4NH0.L_bIgWQLFNE8cpT-02ryVk9AeJINQgvi-DRyQQ_5zs4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6ImNsaWVudGUiLCJpYXQiOjE3Njk5MDYyMjEsImV4cCI6MTc2OTkxMzQyMX0.ZU7gwJSRO0AvkJnnrBCqtAa5OdHvJwVbpjOq6Snoq6U
 
 {
-  "nombre": "Luis",
-  "nickname": "Luis123",
-  "email": "luis123@gmail.com",
-  "password": "1234567890"
+  "id_usuario": 1,
+  "id_juego": 58781
 }

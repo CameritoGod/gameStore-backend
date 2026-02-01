@@ -47,6 +47,7 @@ class AuthController {
       });
 
     } catch (error) {
+      console.error("Error en register:", error);
       res.status(500).json({ message: "Error en el registro" });
     }
   }
