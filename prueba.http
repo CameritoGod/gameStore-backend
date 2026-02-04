@@ -1,37 +1,15 @@
-# POST http://localhost:3000/api/auth/register
+# POST http://localhost:3000/user/purchases
 # Content-Type: application/json
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6ImNsaWVudGUiLCJpYXQiOjE3NzAyMjYwMTcsImV4cCI6MTc3MDIzMzIxN30.DPBO119plx0wp0bHvDhAN2RhNXIfZbIGgZoI3jh28qE
 
 # {
-#   "nombre": "Alejandro",
-#   "nickname": "Usuario 1",
-#   "email": "cuenta2@gmail.com",
-#   "password": "123456"
+#   "id_usuario": 1,
+#   "id_juego": 3498,
+#   "nombre": "Grand Theft Auto V",
+#   "imagen_url": "https://example.com/gta5.jpg",
+#   "precio": 59.99
 # }
 
-# POST http://localhost:3000/api/auth/login
-# Content-Type: application/json
-
-# {
-#   "email": "cuenta2@gmail.com",
-#   "password": "123456"
-# }
-
-#PUT http://localhost:3000/user/2
-#Content-Type: application/json
-#Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6ImNsaWVudGUiLCJpYXQiOjE3NjkyOTQ2ODQsImV4cCI6MTc2OTMwMTg4NH0.L_bIgWQLFNE8cpT-02ryVk9AeJINQgvi-DRyQQ_5zs4
-#
-#{
-#  "nombre": "Luis",
-#  "nickname": "Luis123",
-#  "email": "luis123@gmail.com",
-#  "password": "1234567890"
-#}
-
-DELETE http://localhost:3000/user/deletefavorites
+GET  http://localhost:3000/user/purchases/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6ImNsaWVudGUiLCJpYXQiOjE3Njk5MDYyMjEsImV4cCI6MTc2OTkxMzQyMX0.ZU7gwJSRO0AvkJnnrBCqtAa5OdHvJwVbpjOq6Snoq6U
-
-{
-  "id_usuario": 1,
-  "id_juego": 58781
-}
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6ImNsaWVudGUiLCJpYXQiOjE3NzAyMjYwMTcsImV4cCI6MTc3MDIzMzIxN30.DPBO119plx0wp0bHvDhAN2RhNXIfZbIGgZoI3jh28qE
