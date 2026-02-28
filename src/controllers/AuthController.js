@@ -8,7 +8,7 @@ class AuthController {
   // REGISTRO
   async register(req, res) {
     try {
-      const { nombre, nickname, email, password } = req.body;
+      const { nombre, nickname, email, password, rol } = req.body;
 
       if (!nombre || !nickname || !email || !password) {
         return res.status(400).json({ message: "Datos incompletos" });
@@ -28,11 +28,11 @@ class AuthController {
       const [result] = await db.query(
         `INSERT INTO usuarios (nombre, nickname, email, password, rol)
          VALUES (?, ?, ?, ?, ?)`,
-        [nombre, nickname, email, passwordHash, "cliente"]
+        [nombre, nickname, email, passwordHash, rol || "cliente"]
       );
 
       const token = jwt.sign(
-        { id_usuario: result.insertId, rol: "cliente" },
+        { id_usuario: result.insertId, rol: rol || "cliente" },
         process.env.JWT_SECRET,
         { expiresIn: "2h" }
       );
@@ -42,7 +42,7 @@ class AuthController {
         nombre,
         nickname,
         email,
-        rol: "cliente",
+        rol: rol || "cliente",
         token
       });
 
@@ -59,6 +59,7 @@ class AuthController {
   async login(req, res) {
     try {
       const { email, password } = req.body;
+      const baseUrl = process.env.BASE_URL || "http://localhost:3000";
 
       if (!email || !password) {
         return res.status(400).json({ message: "Datos obligatorios" });
@@ -92,6 +93,7 @@ class AuthController {
         name: user.nombre,
         email: user.email,
         role: user.rol,
+        avatar: `${baseUrl}${user.avatar_url || "/nulls/null-user-img.png"}`,
         token
       });
 

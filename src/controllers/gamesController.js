@@ -1,5 +1,6 @@
 const axios = require('axios');
 const { BASE_URL, API_KEY } = require('../api/catalogo');
+const db = require('../database/db');
 
 const generateRandomPrice = () => {
   const min = 5;
@@ -15,18 +16,22 @@ class GamesController {
       const { page = 1, genre, year, search } = req.query;
       const pageSize = 12;
     
-      const response = await axios.get(BASE_URL, {
-        params: {
-          key: API_KEY,
-          page,
-          page_size: pageSize,
-          ...(genre && genre !== "all" && { genres: genre }),
-          ...(search && { search }),
-          ...(year && {
-            dates: `${year}-01-01,${year}-12-31`
-          })
-        }
-      });
+      const rawgParams = {
+        key: API_KEY,
+        page,
+        page_size: pageSize,
+        ordering: '-relevance', // ✅ Orden por relevancia de RAWG
+      };
+    
+      // ✅ Usar 'search' para búsqueda fuzzy (nombre, descripción, etc.)
+      if (search && search.trim()) {
+        rawgParams.search = search.trim(); // RAWG se encarga del encoding
+      }
+    
+      if (genre && genre !== "all") rawgParams.genres = genre;
+      if (year) rawgParams.dates = `${year}-01-01,${year}-12-31`;
+    
+      const response = await axios.get(BASE_URL, { params: rawgParams });
     
       const games = response.data.results.map(game => ({
         id: game.id,
@@ -44,6 +49,7 @@ class GamesController {
       });
     
     } catch (error) {
+      console.error('❌ Error en gamesAll:', error.message);
       res.status(500).json({
         message: "Error al obtener juegos",
         error: error.message
@@ -201,6 +207,35 @@ async gamesTrending(req, res) {
     });
   }
 }
+
+  async getAllDiscounts(req, res) {
+    try {
+      const [results] = await db.query(`SELECT 
+        d.id_descuento,
+        d.id_juego AS id,
+        jr.nombre AS title,
+        jr.imagen_url AS image,
+        d.porcentaje AS discount,
+        d.fecha_inicio,
+        d.fecha_fin
+      FROM descuentos d
+      JOIN juegos_referencia jr ON d.id_juego = jr.id_juego
+      ORDER BY d.fecha_inicio DESC`
+    );
+
+    const offerGame = results.map(discount => ({
+      ...discount, // Mantiene todas las propiedades originales de la BD
+      oldPrice: generateRandomPrice() // Agrega la nueva propiedad
+    }));
+
+    
+
+      res.status(200).json(offerGame);
+    } catch (error) {
+      console.error("Error getAllDiscounts:", error);
+      res.status(500).json({ message: "Error interno del servidor" });
+    }
+  }
 
 }
 module.exports = new GamesController();

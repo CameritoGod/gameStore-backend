@@ -5,6 +5,8 @@ const gamesController = require('../controllers/gamesController');
 router.get('/trending', gamesController.gamesTrending);
 router.get('/recommendations', gamesController.gameRecommendations);
 router.get('/all', gamesController.gamesAll);
+router.get('/discounts', gamesController.getAllDiscounts);
+
 router.get('/:id', gamesController.gameById);
 
 
