@@ -9,6 +9,7 @@ class AuthController {
   async register(req, res) {
     try {
       const { nombre, nickname, email, password, rol } = req.body;
+      const baseUrl = (process.env.BASE_URL || "http://localhost:3000").replace(/\/$/, '');
 
       if (!nombre || !nickname || !email || !password) {
         return res.status(400).json({ message: "Datos incompletos" });
@@ -43,6 +44,7 @@ class AuthController {
         nickname,
         email,
         rol: rol || "cliente",
+        avatar: `${baseUrl}${"/nulls/null-user-img.png"}`,
         token
       });
 
@@ -59,8 +61,8 @@ class AuthController {
   async login(req, res) {
     try {
       const { email, password } = req.body;
-      const baseUrl = process.env.BASE_URL || "http://localhost:3000";
-
+      const baseUrl = (process.env.BASE_URL || "http://localhost:3000").replace(/\/$/, '');
+      
       if (!email || !password) {
         return res.status(400).json({ message: "Datos obligatorios" });
       }

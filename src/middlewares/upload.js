@@ -1,3 +1,4 @@
+// src/middlewares/uploadAvatar.js
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -5,7 +6,7 @@ const fs = require('fs');
 // Configurar almacenamiento
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    // ✅ Salir de src/middlewares → ir a backend/public/uploads/avatars
+    // 🎯 Ruta absoluta: backend/public/uploads/avatars
     const uploadPath = path.join(__dirname, '../../public/uploads/avatars');
     
     // Crear carpeta si no existe
