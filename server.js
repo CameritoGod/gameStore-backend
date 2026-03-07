@@ -13,11 +13,11 @@ const PORT = process.env.PORT || 3000;
 const ALLOWED_ORIGINS = [
   'http://localhost:5173',                        // Vite local
   'http://localhost:3000',                        // CRA local
-  'https://game-store-frontend-three.vercel.app', // 👈 Tu dominio REAL (sin espacios)
-  /\.vercel\.app$/                                // 👈 Permite cualquier preview de Vercel
+  'https://game-store-frontend-three.vercel.app', // Dominio REAL (sin espacios)
+  /\.vercel\.app$/                                // Permite cualquier preview de Vercel
 ];
 
-// 🛡️ Configuración de CORS con función personalizada
+// Configuración de CORS con función personalizada
 app.use(cors({
   origin: function (origin, callback) {
     // Permitir requests sin origin (Postman, curl, server-to-server)
@@ -56,7 +56,7 @@ app.use('/user', userRouter);
 const adminRouter = require('./src/routes/adminRoutes');
 app.use('/admin', adminRouter);
 
-// 🚀 Iniciar servidor
+// Iniciar servidor
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
   console.log(`🔗 Base URL: ${process.env.BASE_URL || `http://localhost:${PORT}`}`);
