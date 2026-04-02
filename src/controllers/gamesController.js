@@ -208,9 +208,11 @@ async gamesTrending(req, res) {
   }
 }
 
-  async getAllDiscounts(req, res) {
-    try {
-      const [results] = await db.query(`SELECT 
+async getAllDiscounts(req, res) {
+  try {
+    // Usamos CURDATE() para comparar solo la fecha actual del servidor
+    const [results] = await db.query(`
+      SELECT 
         d.id_descuento,
         d.id_juego AS id,
         jr.nombre AS title,
@@ -220,22 +222,20 @@ async gamesTrending(req, res) {
         d.fecha_fin
       FROM descuentos d
       JOIN juegos_referencia jr ON d.id_juego = jr.id_juego
+      WHERE CURDATE() BETWEEN d.fecha_inicio AND d.fecha_fin
       ORDER BY d.fecha_inicio DESC`
     );
-
     const offerGame = results.map(discount => ({
-      ...discount, // Mantiene todas las propiedades originales de la BD
-      oldPrice: generateRandomPrice() // Agrega la nueva propiedad
+      ...discount, 
+      // Asegúrate de que el precio base sea coherente
+      oldPrice: generateRandomPrice() 
     }));
-
-    
-
-      res.status(200).json(offerGame);
-    } catch (error) {
-      console.error("Error getAllDiscounts:", error);
-      res.status(500).json({ message: "Error interno del servidor" });
-    }
+    res.status(200).json(offerGame);
+  } catch (error) {
+    console.error("Error getAllDiscounts:", error);
+    res.status(500).json({ message: "Error interno del servidor" });
   }
+}
 
 }
 module.exports = new GamesController();
