@@ -6,7 +6,7 @@ const fs = require('fs').promises;
 
 class UserController {
 
- // ✅ NUEVO: Actualizar avatar (con rutas absolutas correctas)
+ // Actualizar avatar (con rutas absolutas correctas)
   async updateAvatar(req, res) {
     try {
       if (!req.user?.id) {
@@ -18,50 +18,39 @@ class UserController {
       }
 
       const userId = req.user.id;
+      // Obtener la URL base de Render (sin barra al final)
+      const baseUrl = (process.env.BASE_URL || "http://localhost:3000").replace(/\/$/, '');
 
-      // 🗑️ Obtener avatar anterior de la BD
+      // 1. Obtener avatar anterior de la BD para borrar el archivo físico
       const [oldUser] = await db.query('SELECT avatar_url FROM usuarios WHERE id_usuario = ?', [userId]);
-      const oldAvatar = oldUser[0]?.avatar_url;
+      const oldAvatarUrl = oldUser[0]?.avatar_url;
 
-      // ✅ Eliminar archivo anterior SOLO si existe y no es el default
-      if (oldAvatar && !oldAvatar.includes('default-avatar.png')) {
-        // 🔥 CORRECCIÓN: Usar ruta absoluta basada en la raíz del proyecto
-        // __dirname = backend/src/controllers → ../../ = backend/
-        const oldPath = path.join(__dirname, '../../public', oldAvatar);
-
+      if (oldAvatarUrl && !oldAvatarUrl.includes('default-avatar.png')) {
+        // Extraer el nombre del archivo de la URL guardada
+        const fileName = oldAvatarUrl.split('/').pop();
+        const oldPath = path.join(__dirname, '../../public/uploads/avatars', fileName);
+        
         try {
           await fs.access(oldPath);
           await fs.unlink(oldPath);
-          console.log('🗑️ Avatar anterior eliminado:', oldAvatar);
+          console.log('🗑️ Archivo anterior eliminado');
         } catch (err) {
-          // ⚠️ No es error crítico: si el archivo no existe, simplemente continuamos
-          console.warn('⚠️ Avatar anterior no encontrado (puede ser normal):', oldAvatar);
+          console.log('⚠️ No se pudo eliminar el archivo anterior o no existe');
         }
       }
 
-      // 💾 Guardar nueva ruta en BD
-      const avatarUrl = `/uploads/avatars/${req.file.filename}`;
-
-      await db.query('UPDATE usuarios SET avatar_url = ? WHERE id_usuario = ?', [avatarUrl, userId]);
+      // 2. Guardar la nueva URL (usando la base de Render)
+      const newAvatarUrl = `${baseUrl}/uploads/avatars/${req.file.filename}`;
+      await db.query('UPDATE usuarios SET avatar_url = ? WHERE id_usuario = ?', [newAvatarUrl, userId]);
 
       res.status(200).json({
-        message: 'Avatar actualizado correctamente',
-        avatar_url: avatarUrl
+        message: 'Avatar actualizado con éxito',
+        avatar_url: newAvatarUrl
       });
 
     } catch (error) {
-      console.error('❌ Error al actualizar avatar:', error);
-
-      // 🧹 Limpieza en caso de error: borrar archivo si la BD falló
-      if (req.file?.filename) {
-        const failedPath = path.join(__dirname, '../../public/uploads/avatars', req.file.filename);
-        fs.unlink(failedPath).catch(() => {});
-      }
-
-      res.status(500).json({ 
-        message: 'Error interno al actualizar avatar',
-        error: process.env.NODE_ENV === 'development' ? error.message : undefined
-      });
+      console.error("❌ Error en updateAvatar:", error);
+      res.status(500).json({ message: 'Error interno al actualizar avatar' });
     }
   }
 

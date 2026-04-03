@@ -129,7 +129,7 @@ class AuthController {
     
       await db.query(
         "UPDATE usuarios SET reset_code = ?, reset_expires = ? WHERE id_usuario = ?",
-        [cdoe, expires, user.id_usuario]
+        [code, expires, user.id_usuario]
       );
     
       const transporter = nodemailer.createTransport({
